@@ -1,17 +1,11 @@
 <?php
 namespace Zumba\User\Service;
 
-use \Zumba\User\Contract\Command,
-	\Zumba\User\Factory\EventQueueRepo,
-	\Zumba\User\Factory\Repo,
-	\Zumba\User\Contract\Transactional;
+use \Zumba\User\Factory\EventQueueRepo;
 
-class UserDiscountCreate implements Command, Transactional {
+class UserDiscountCreate extends Command {
 
 	private $params = [];
-
-	//probally should be a repo collection
-	private $repos = [];
 
 	public function __construct(array $params) {
 		//validate params
@@ -25,14 +19,6 @@ class UserDiscountCreate implements Command, Transactional {
 		$this->repos['EventQueue'] = EventQueueRepo::build();
 
 
-	}
-
-	private function loadRepo(string $name) {
-		$this->repos[$name] = Repo::build($name);
-	}
-
-	private function getRepo(string  $name) {
-		return $this->repos[$name];
 	}
 
 	public function execute() : void {
@@ -51,33 +37,6 @@ class UserDiscountCreate implements Command, Transactional {
 			$this->rollback();
 		}
 
-	}
-
-	public function start(): void
-	{
-		foreach ($this->repos as $r) {
-			if ($r instanceof  Transactional) {
-				$r->start();
-			}
-		}
-	}
-
-	public function commit(): void
-	{
-		foreach ($this->repos as $r) {
-			if ($r instanceof  Transactional) {
-				$r->commit();
-			}
-		}
-	}
-
-	public function rollback(): void
-	{
-		foreach ($this->repos as $r) {
-			if ($r instanceof  Transactional) {
-				$r->rollback();
-			}
-		}
 	}
 
 
