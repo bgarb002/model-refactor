@@ -38,7 +38,7 @@ class EventQueueSQS implements Transactional, Event {
 		if ($this->useQueue) {
 			array_push($this->queue, compact('event', 'data'));
 		} else {
-			$this->start(compact('event', 'data'));
+			$this->store(compact('event', 'data'));
 		}
 	}
 
