@@ -2,21 +2,17 @@
 namespace Zumba\User\Repository;
 
 use\Zumba\User\Contract\Transactional,
-	\Zumba\User\Contract\SavableEntity,
-	\Zumba\User\Contract\User,
 	\Zumba\User\Contract\Event;
 
 class EventQueueSQS implements Transactional, Event {
 	private $useQueue = false;
 	private $queue = [];
 
-	public function start(): void
-	{
+	public function start(): void {
 		$this->useQueue = true;
 	}
 
-	public function commit(): void
-	{
+	public function commit(): void {
 		foreach ($this->queue as $q) {
 			$this->store($q);
 		}
@@ -34,13 +30,11 @@ class EventQueueSQS implements Transactional, Event {
 		$this->useQueue = false;
 	}
 
-	public function rollback(): void
-	{
+	public function rollback(): void {
 		$this->resetQueue();
 	}
 
-	public function trigger(string $event, array $data): void
-	{
+	public function trigger(string $event, array $data): void {
 		if ($this->useQueue) {
 			array_push($this->queue, compact('event', 'data'));
 		} else {
